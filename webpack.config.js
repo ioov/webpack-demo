@@ -6,12 +6,12 @@ var path = require('path'),
 module.exports = {
 	entry: {
 		"index/demo": ROOT_PATH + '/src/index.js',
-		"vendor": ["vue", "vue-router", "vuex"]
+		"common/vendor": ["vue", "vue-router", "vuex"]
 	},
 	output: {
 		path: ROOT_PATH + '/dist/',
-		filename: '[name].js',
-		publicPath: '/dist/'
+		filename: 'js/[name].js',
+		publicPath: '/'
 	},
 	resolve: {
 		extensions: ['.js', '.vue'],
@@ -54,16 +54,8 @@ module.exports = {
 	},
 	plugins: [
 		new webpack.optimize.CommonsChunkPlugin({
-			name: 'vendor',
-			// (给 chunk 一个不同的名字)
-			filename: 'vendor.js',
-			// 随着 入口chunk 越来越多，这个配置保证没其它的模块会打包进 公共chunk
-			minChunks: function(module, count) {
-				if (module.resource && (/^.*\.(css)$/).test(module.resource)) {
-					return false;
-				}
-				return module.context && module.context.indexOf('node_modules') !== -1 && count == 2;
-			}
+			name: 'common/manifest',
+			minChunks: 2
 		}),
 		// new webpack.optimize.CommonsChunkPlugin({
 		// 	name: 'manifest',
@@ -74,11 +66,11 @@ module.exports = {
 		// 		return module.context && module.context.indexOf('node_modules') !== -1;
 		// 	}
 		// }),
-		new ExtractTextPlugin('[name].css')
+		new ExtractTextPlugin('css/[name].css')
 	],
 	devServer: {
 		contentBase: path.resolve(__dirname),
-		publicPath: '/dist/',
+		publicPath: '/',
 		proxy: {
 			'/dataApi': {
 				target: 'http://open.onebox.so.com',

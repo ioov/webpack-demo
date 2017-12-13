@@ -5,8 +5,8 @@ var path = require('path'),
 
 module.exports = {
 	entry: {
-		index: ROOT_PATH + '/src/index.js',
-		vendor: ["vue", "vue-router", "vuex"]
+		"index/demo": ROOT_PATH + '/src/index.js',
+		"vendor": ["vue", "vue-router", "vuex"]
 	},
 	output: {
 		path: ROOT_PATH + '/dist/',

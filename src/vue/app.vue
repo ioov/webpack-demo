@@ -8,7 +8,7 @@
 </template>
 
 <script>
-	import './index.css';
+	import '@/css/home/index.css';
 	export default {
 		data () {
 			return {

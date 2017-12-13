@@ -1,21 +1,64 @@
-var path = require('path'),
-	webpack = require('webpack'),
-	ROOT_PATH = path.resolve(__dirname),
-	ExtractTextPlugin = require('extract-text-webpack-plugin');
+let path = require('path');
+let	webpack = require('webpack');
+let	glob = require('glob');
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
+let APP_PATH = path.resolve(__dirname);
+
+function feaEntry(devDir, ignore) {
+    let iPattern = [];
+    //忽略的文件或文件夹
+    if (ignore) {
+        if (ignore.forEach) {
+            let tmpPattern = '';
+            ignore.forEach(function(ing, ind) {
+                if (/\.js$/.test(ing)) {
+                    //如果是具体的文件路径，则直接添加到ignore数组中。
+                    iPattern.push(devDir + ing);
+                } else {
+                    if (!/\//g.test(ing)) {
+                        //如果是目录，则拼装成 | | 的表达式，目前只支持一级目录
+                        if (tmpPattern) {
+                            tmpPattern = tmpPattern + '|' + ing;
+                        } else {
+                            tmpPattern = tmpPattern + ing;
+                        }
+                    }
+                }
+            });
+
+            iPattern.push(devDir + '*(' + tmpPattern + ')/**/*.js');
+        }
+    } else {
+
+    }
+
+    let entrys = glob.sync(devDir + '/**/index.*js', {
+        ignore: iPattern
+    })
+
+    //将入口文件名称转换为入口对象
+    let entryObj = {};
+    entrys.forEach(function(entry, ind) {
+        entryObj[entry.replace(devDir, '').replace(/.js$/, '')] = entry;
+    });
+
+    return entryObj;
+};
+
+let entrys = feaEntry(APP_PATH+'/src/js/');
+entrys['common/vendor'] = ['vue','vue-router','vuex'];
 
 module.exports = {
-	entry: {
-		"index/demo": ROOT_PATH + '/src/index.js',
-		"common/vendor": ["vue", "vue-router", "vuex"]
-	},
+	entry: entrys,
 	output: {
-		path: ROOT_PATH + '/dist/',
+		path: APP_PATH + '/dist/',
 		filename: 'js/[name].js',
 		publicPath: '/'
 	},
 	resolve: {
 		extensions: ['.js', '.vue'],
 		alias: {
+			"@": APP_PATH+'/src/',
 			//You are using the runtime-only build of Vue where the template compiler is not available. Either pre-compile the templates into render functions, or use the compiler-included build
 			'vue': 'vue/dist/vue.js'
 		}
@@ -57,15 +100,6 @@ module.exports = {
 			name: 'common/manifest',
 			minChunks: 2
 		}),
-		// new webpack.optimize.CommonsChunkPlugin({
-		// 	name: 'manifest',
-		// 	minChunks: function(module) {
-		// 		if (module.resource && (/^.*\.(css)$/).test(module.resource)) {
-		// 			return false;
-		// 		}
-		// 		return module.context && module.context.indexOf('node_modules') !== -1;
-		// 	}
-		// }),
 		new ExtractTextPlugin('css/[name].css')
 	],
 	devServer: {

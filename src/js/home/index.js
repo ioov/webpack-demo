@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
-import App from './app.vue';
-import routes from './routers.js';
+import App from '@/vue/app.vue';
+import routes from '@/vue/routers.js';
+
 
 Vue.use(Vuex);
 Vue.use(VueRouter);

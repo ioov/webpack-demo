@@ -1,7 +1,7 @@
 // 1. 定义（路由）组件。
 // 可以从其他文件 import 进来
-import Foo from './foo.vue';
-import Bar from './bar.vue';
+import Foo from '@/vue/foo.vue';
+import Bar from '@/vue/bar.vue';
 
 // 2. 定义路由
 // 每个路由应该映射一个组件。 其中"component" 可以是
